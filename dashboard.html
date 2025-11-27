@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cobros Agentes · Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="logo-wrapper">
+        <div class="logo-mark">
+          <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g3" x1="0" x2="1" y1="1" y2="0">
+                <stop offset="0" stop-color="#2563eb"/>
+                <stop offset="1" stop-color="#4f46e5"/>
+              </linearGradient>
+            </defs>
+            <rect x="3" y="3" width="26" height="26" rx="7" fill="url(#g3)"/>
+            <path d="M10.5 22.5c-.8-.8-.8-2.1 0-2.9l5.2-5.2c.4-.4 1-.4 1.4 0l1.8 1.8 2.2-2.2c.4-.4 1-.4 1.4 0s.4 1 0 1.4l-2.9 2.9c-.4.4-1 .4-1.4 0l-1.8-1.8-4.5 4.5c-.8.8-2.1.8-2.9 0z" fill="#eff6ff"/>
+            <circle cx="11" cy="11" r="2" fill="#bfdbfe"/>
+          </svg>
+        </div>
+        <div>
+          <div class="logo-text-main">Cobros Agentes</div>
+          <div class="logo-text-sub">Dashboard de clientes</div>
+        </div>
+      </div>
+    </header>
+
+    <section id="loginScreen" class="login-only-card">
+      <h2>Dashboard interno</h2>
+      <p>Para ver las métricas de clientes ingresa la contraseña de acceso.</p>
+      <div class="form-group">
+        <label for="passwordInput">Contraseña</label>
+        <input type="password" id="passwordInput" autocomplete="current-password" />
+        <div id="loginError" class="error-text" style="display:none;"></div>
+      </div>
+      <button class="button button-primary" type="button" onclick="loginDashboard()">
+        <span class="button-icon">📊</span>
+        <span>Ver dashboard</span>
+      </button>
+      <p class="footer-note">Muestra solo métricas agregadas, sin exponer información detallada.</p>
+    </section>
+
+    <main id="dashboardApp" class="hidden">
+      <div class="main-card dashboard-layout">
+        <section>
+          <span class="pill">
+            <span class="pill-dot"></span>
+            Resumen de la base de clientes
+          </span>
+          <h1 class="title">Visión general</h1>
+          <p class="subtitle">
+            Métricas agregadas de la base de clientes para apoyar la gestión de cobros y planeación.
+          </p>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-label">Total de clientes</div>
+              <div class="kpi-value" id="kpiTotal">–</div>
+              <div class="kpi-sub">Registros en la base interna</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Con correo registrado</div>
+              <div class="kpi-value" id="kpiEmail">–</div>
+              <div class="kpi-sub" id="kpiEmailPct">–</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Con teléfono</div>
+              <div class="kpi-value" id="kpiPhone">–</div>
+              <div class="kpi-sub" id="kpiPhonePct">–</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Edad promedio (aprox.)</div>
+              <div class="kpi-value" id="kpiEdad">–</div>
+              <div class="kpi-sub">Calculada según fecha de nacimiento</div>
+            </div>
+          </div>
+
+          <section style="margin-top: 1.2rem;">
+            <h2 class="section-title">Últimos clientes (muestra)</h2>
+            <p class="section-sub">Listado de algunos de los clientes más recientes registrados en la base.</p>
+            <ul class="list-compact" id="lastClientsList">
+              <li>Cargando información…</li>
+            </ul>
+          </section>
+
+          <p class="footer-note">
+            Esta vista es solo informativa. Para detalle por cliente utiliza el buscador principal.
+          </p>
+        </section>
+
+        <section>
+          <div class="chart-card">
+            <h2 class="section-title">Distribución por rangos de edad</h2>
+            <p class="section-sub">Rangos calculados con base en la fecha de nacimiento disponible.</p>
+            <canvas id="ageChart" height="180"></canvas>
+          </div>
+
+          <div class="chart-card">
+            <h2 class="section-title">Prefijos de teléfono más frecuentes</h2>
+            <p class="section-sub">
+              Se analizan los primeros dígitos de los teléfonos registrados para identificar patrones de contacto.
+            </p>
+            <canvas id="prefixChart" height="180"></canvas>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

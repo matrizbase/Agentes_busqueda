@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cobros Agentes · Buscador</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="logo-wrapper">
+        <div class="logo-mark">
+          <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g2" x1="0" x2="1" y1="1" y2="0">
+                <stop offset="0" stop-color="#2563eb"/>
+                <stop offset="1" stop-color="#4f46e5"/>
+              </linearGradient>
+            </defs>
+            <rect x="3" y="3" width="26" height="26" rx="7" fill="url(#g2)"/>
+            <path d="M10.5 22.5c-.8-.8-.8-2.1 0-2.9l5.2-5.2c.4-.4 1-.4 1.4 0l1.8 1.8 2.2-2.2c.4-.4 1-.4 1.4 0s.4 1 0 1.4l-2.9 2.9c-.4.4-1 .4-1.4 0l-1.8-1.8-4.5 4.5c-.8.8-2.1.8-2.9 0z" fill="#eff6ff"/>
+            <circle cx="11" cy="11" r="2" fill="#bfdbfe"/>
+          </svg>
+        </div>
+        <div>
+          <div class="logo-text-main">Cobros Agentes</div>
+          <div class="logo-text-sub">Panel de consulta interna</div>
+        </div>
+      </div>
+    </header>
+
+    <section id="loginScreen" class="login-only-card">
+      <h2>Acceso restringido</h2>
+      <p>Ingresa la contraseña asignada para utilizar el buscador de clientes.</p>
+      <div class="form-group">
+        <label for="passwordInput">Contraseña</label>
+        <input type="password" id="passwordInput" autocomplete="current-password" />
+        <div id="loginError" class="error-text" style="display:none;"></div>
+      </div>
+      <button class="button button-primary" type="button" onclick="login()">
+        <span class="button-icon">🔐</span>
+        <span>Ingresar</span>
+      </button>
+      <p class="footer-note">Uso exclusivo interno. No compartir esta pantalla fuera de la empresa.</p>
+    </section>
+
+    <main id="app" class="hidden">
+      <div class="main-card">
+        <div>
+          <span class="pill">
+            <span class="pill-dot"></span>
+            Buscador universal por DPI, nombre, NIT, correo o teléfono
+          </span>
+          <h1 class="title">Buscar cliente</h1>
+          <p class="subtitle">
+            Escribe un DPI, nombre, NIT, teléfono o correo para consultar la base interna y generar análisis complementario.
+          </p>
+
+          <div class="form-group">
+            <label for="searchInput">Buscar</label>
+            <div class="search-input-wrapper">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Ej. 2614261760502 · Juan Pérez · 55551234 · cliente@correo.com"
+              />
+              <button class="button button-primary" type="button" onclick="buscar()">
+                <span class="button-icon">🔎</span>
+                <span>Buscar</span>
+              </button>
+            </div>
+            <div class="search-hint">
+              Se buscará en: DPI, nombre, NIT, correo y teléfonos.
+              <div class="chip-group">
+                <span class="chip">DPI exacto / parcial</span>
+                <span class="chip">Nombre contiene</span>
+                <span class="chip">NIT</span>
+                <span class="chip">Teléfono</span>
+                <span class="chip">Correo</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="muted">
+            Sugerencia: inicia por DPI si lo tienes, o usa parte del nombre y algún teléfono para refinar.
+          </p>
+        </div>
+
+        <div>
+          <div class="results-card">
+            <div class="results-header">
+              <div>
+                <div class="results-title">Resultados internos</div>
+                <div class="results-count" id="resultsCount">Ingresa un criterio de búsqueda.</div>
+              </div>
+              <div>
+                <span class="badge">
+                  <span class="badge-dot"></span>
+                  Base interna cargada
+                </span>
+              </div>
+            </div>
+            <div id="resultsContainer">
+              <p class="result-empty">
+                Aún no hay resultados. Escribe un DPI, nombre, NIT, correo o teléfono y presiona “Buscar”.
+              </p>
+            </div>
+          </div>
+
+          <div id="externalInsights" class="external-card">
+            <div class="external-header">
+              <div class="external-title-wrap">
+                <div class="external-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="11" cy="11" r="6" stroke-width="1.7"/>
+                    <path d="M15.5 15.5L20 20" stroke-width="1.7" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="external-title">Análisis complementario</div>
+                  <div class="external-subtitle" id="externalSubtitle">
+                    Ingresa un criterio de búsqueda para generar contexto externo sugerido.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="externalContent">
+              <p class="result-empty">
+                Aún no se ha generado análisis externo. Realiza una búsqueda para ver sugerencias contextuales.
+              </p>
+            </div>
+            <div class="external-footer-note">
+              La información mostrada es de carácter orientativo y se basa en patrones generales, no en consultas directas a fuentes externas.
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
