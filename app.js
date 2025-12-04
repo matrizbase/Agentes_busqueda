@@ -1,10 +1,67 @@
+let clientesRaw = [];
 let clientes = [];
 const PASSWORD = "Lex5213";
 
+/* 🔧 Normalizador de clientes
+   Acepta distintas estructuras (DPI vs dpi, Tel_1 vs telefonos, etc.)
+*/
+function normalizarCliente(c) {
+  const toStr = (v) => (v == null ? "" : String(v).trim());
+
+  const dpi =
+    toStr(c.dpi) ||
+    toStr(c.DPI) ||
+    toStr(c.Dpi);
+
+  const nombre =
+    toStr(c.nombre) ||
+    toStr(c.NOMBRE_CLIENTE) ||
+    toStr(c.Nombre);
+
+  const nit =
+    toStr(c.nit) ||
+    toStr(c.NIT);
+
+  const email =
+    toStr(c.email) ||
+    toStr(c.EMAIL) ||
+    toStr(c.Correo);
+
+  let telefonos = [];
+
+  // Si ya viene un array de teléfonos, lo usamos
+  if (Array.isArray(c.telefonos)) {
+    telefonos = c.telefonos.map(toStr).filter(Boolean);
+  } else {
+    // Si no, buscamos campos que parezcan teléfonos: Tel_1, TEL2, telefono1, etc.
+    Object.keys(c).forEach((k) => {
+      const kLower = k.toLowerCase();
+      if (kLower.startsWith("tel") || kLower.includes("telefono")) {
+        const val = toStr(c[k]);
+        if (val) {
+          telefonos.push(val);
+        }
+      }
+    });
+  }
+
+  return {
+    ...c,
+    dpi,
+    nombre,
+    nit,
+    email,
+    telefonos,
+  };
+}
+
+/* Cargar base */
 fetch("base_clientes.json")
   .then((r) => r.json())
   .then((data) => {
-    clientes = data || [];
+    clientesRaw = Array.isArray(data) ? data : [];
+    clientes = clientesRaw.map(normalizarCliente);
+    console.log("Clientes cargados:", clientes.length);
   })
   .catch((err) => {
     console.error("Error cargando base_clientes.json", err);
@@ -30,9 +87,7 @@ function login() {
 }
 
 /* ======================================================
-   🔧 **BUSCADOR CORREGIDO**
-   Ahora DPI, NIT y teléfonos se convierten siempre a STRING.
-   Esto evita fallos cuando el JSON trae números en vez de texto.
+   🔍 BUSCADOR (con datos normalizados)
    ====================================================== */
 function buscar() {
   const termInput = document.getElementById("searchInput");
@@ -41,7 +96,8 @@ function buscar() {
   const resultsCount = document.getElementById("resultsCount");
 
   if (!term) {
-    resultsContainer.innerHTML = "<p class='result-empty'>Ingresa un valor para buscar en la base.</p>";
+    resultsContainer.innerHTML =
+      "<p class='result-empty'>Ingresa un valor para buscar en la base.</p>";
     resultsCount.textContent = "Sin búsqueda activa.";
     renderExternalInsights(term, null);
     return;
@@ -51,13 +107,12 @@ function buscar() {
   const isNumeric = /^[0-9]+$/.test(term);
 
   const resultados = clientes.filter((c) => {
-    // 🔧 Convertir SIEMPRE a string
     const dpi = (c.dpi || "").toString();
     const nombre = (c.nombre || "").toLowerCase();
     const nit = (c.nit || "").toString().toLowerCase();
     const email = (c.email || "").toLowerCase();
     const telefonos = Array.isArray(c.telefonos)
-      ? c.telefonos.map((t) => (t || "").toString()) // ← FIX IMPORTANTE
+      ? c.telefonos.map((t) => (t || "").toString())
       : [];
 
     let match = false;
@@ -86,11 +141,14 @@ function buscar() {
   });
 
   if (!resultados.length) {
-    resultsContainer.innerHTML = "<p class='result-empty'>No se encontraron clientes con el criterio indicado.</p>";
+    resultsContainer.innerHTML =
+      "<p class='result-empty'>No se encontraron clientes con el criterio indicado.</p>";
     resultsCount.textContent = "0 resultados.";
   } else {
     resultsCount.textContent =
-      resultados.length === 1 ? "1 resultado encontrado." : resultados.length + " resultados encontrados.";
+      resultados.length === 1
+        ? "1 resultado encontrado."
+        : resultados.length + " resultados encontrados.";
 
     const fragment = document.createDocumentFragment();
 
@@ -162,6 +220,9 @@ function buscar() {
   renderExternalInsights(term, referencia);
 }
 
+/* ======================
+   UTILIDADES
+   ====================== */
 function titleCase(str) {
   return (str || "")
     .toLowerCase()
@@ -181,11 +242,11 @@ function simplifyHandle(str) {
     .slice(0, 18);
 }
 
+/* ======================
+   ANÁLISIS EXTERNO
+   (lo dejo igual que el tuyo, solo usa los datos normalizados)
+   ====================== */
 function renderExternalInsights(term, clienteRef) {
-  // Tu sección externa queda igual (no tiene relación con el fallo)
-  // No la toqué para NO alterar tu diseño ni estructura.
-  // Solo dependía del término y referencia, no del problema del JSON.
-
   const subtitleEl = document.getElementById("externalSubtitle");
   const container = document.getElementById("externalContent");
 
@@ -286,6 +347,9 @@ function renderExternalInsights(term, clienteRef) {
   container.innerHTML = html;
 }
 
+/* ======================
+   Eventos de teclado
+   ====================== */
 document.addEventListener("DOMContentLoaded", () => {
   const pwdInput = document.getElementById("passwordInput");
   if (pwdInput) {
